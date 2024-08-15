@@ -1,0 +1,20 @@
+header {
+  background: linear-gradient(#dc4a07, white); 
+  font-size: 20px;
+  
+}
+  
+
+p {
+  font-size: 15px;
+}
+
+.btncontador {
+color: aliceblue;
+background-color: #dc4a07;
+height: 40px;
+
+}
+footer{
+ background-color: #dc4a07;
+}
