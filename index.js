@@ -1,49 +1,81 @@
-// Selecciono todos los botones de incremento, decremento, precios, subtotales y los contadores
+
+// declaracion de todos los contenedores a traves de los Id
 const totalIva = document.getElementById('iva')
 const totalElemento = document.getElementById('total')
 const productosContainer = document.getElementById('cajaMostrarProductos')
 const mostrarProductosSeleccion = document.getElementById('cajaMostrarProductosSeleccion')
 const productosSeleccionadosContainer = document.getElementById('productosSeleccionados')
 const botonContinuar = document.getElementById('continuar')
-const listaProductos = ['Hamburguesa Clasica con Papas', 'Hamburguesa Especial con Papas', 'Pizza Muzzarella','Pizza Especial', 'Gaseosa']
-const listaPrecios = [8000, 10000, 10000, 15000, 3000]
 const principalContainer = document.getElementById('cajaPrincipalContainer')
 const confirmarElem = document.getElementById('confirmacion')
 
+//declaracion de array de objetos para productos
+const productos = [
+    { nombre: 'Hamburguesa Clasica con Papas', precio: 8000 },
+    { nombre: 'Hamburguesa Especial con Papas', precio: 10000 },
+    { nombre: 'Pizza Muzzarella', precio: 10000 },
+    { nombre: 'Pizza Especial', precio: 15000 },
+    { nombre: 'Gaseosa', precio: 3000 },
+    ]
 
-  // Inicializo variables
+// Inicializacion variables
 let iva = 0
 let totalMasIva = 0
 let total = 0
-let conteos = 0
+let producto = 0
 
 
-// funcion para mostrar productos
-function mostrarProductos(conteos){
-    productosContainer.innerHTML = ''
-    for (let i=0; i < listaProductos.length; i++){
-        conteos = conteos + 1
-         const productosHTML = `
+// funcion para mostrar productos disponibles
+function mostrarProductos(productos) {
+    productosContainer.innerHTML = ""
+    
+    productos.forEach((producto) => {
+    const productosHTML = `
         <div class="producto card">
-        <h2>${listaProductos[i]}</h2>
-        <p>Precio: AR$<span class="precio">${listaPrecios[i]}</span></p>
+        <h2>${producto.nombre}</h2>
+        <p>Precio: AR$<span class="precio">${producto.precio}</span></p>
         <div class="cajaBoton">
-            <button class="btn menosUno">-1</button>
-            <p class="counter">0</p>
-            <button class="btn masUno">+1</button>  
-        </div> 
+        <button class="btn menosUno">-1</button>
+        <p class="counter">0</p>
+        <button class="btn masUno">+1</button>
         </div>
-        `
-    productosContainer.innerHTML += productosHTML
-    } 
-}
-mostrarProductos()
-let botonMasUno = document.querySelectorAll('.masUno')
-let botonMenosUno = document.querySelectorAll('.menosUno')
-let counters = document.querySelectorAll('.counter')
-let precios = document.querySelectorAll('.precio')
+        </div>
+    `
+    productosContainer.innerHTML += productosHTML;
+    })
+    }
+    mostrarProductos(productos)
 
-// Función para actualizar el subtotal y total
+// Declaracion de todos los botones de masUno, menosUno, contador y precios
+    let botonMasUno = document.querySelectorAll('.masUno')
+    let botonMenosUno = document.querySelectorAll('.menosUno')
+    let counters = document.querySelectorAll('.counter')
+    let precios = document.querySelectorAll('.precio')
+
+// Event listener para cada botón de incremento
+botonMasUno.forEach((button, index) => {
+    button.addEventListener('click', function() {
+        let count = parseInt(counters[index].textContent)
+        count++
+        counters[index].textContent = count  // Actualizo el contador correspondiente
+        actTolales()  // Actualizo subtotales, productos seleccionados y total
+    })
+})
+
+// Event listener para cada botón de decremento
+botonMenosUno.forEach((button, index) => {
+    button.addEventListener('click', function() {
+        let count = parseInt(counters[index].textContent)
+        if (count > 0) {
+            count--
+            counters[index].textContent = count  // Actualizo el contador correspondiente
+            actTolales()  // Actualizo subtotales, productos seleccionados y total
+        }
+    })
+})
+
+
+// Función para mostrar los productos seleccionados y actualizar el subtotal y total a pagar
 function actTolales(iva, totalMasIva, total) {
     total = 0  // Reinicio el total
     productosSeleccionadosContainer.innerHTML = '' // Limpio productos seleccionados
@@ -76,7 +108,7 @@ function actTolales(iva, totalMasIva, total) {
 }
 
 
-//construir lista de productos
+//funcion para construir lista de productos para llevar al storage
 
 function obtenerListaSeleccion(){
     const seleccionElementos = document.querySelectorAll('.seleccion');
@@ -96,7 +128,7 @@ function obtenerListaSeleccion(){
   return listaSeleccion
 }
 
-// Guardar en local storage
+// funcion para guardar en local storage
 function guardarProductos() {
     const listaSeleccion = obtenerListaSeleccion();
     const listaSeleccionJSON = JSON.stringify(listaSeleccion);
@@ -105,7 +137,7 @@ function guardarProductos() {
     
 }
 
-// llamar al storage
+// funcion para llamar al storage
 function llamarDesdeLocalStorage() {
 
     const listaSeleccionJSON = localStorage.getItem('productosSeleccionados');
@@ -118,30 +150,7 @@ function llamarDesdeLocalStorage() {
     return [];
 }
 
-
-// Agrego event listener a cada botón de incrementar
-botonMasUno.forEach((button, index) => {
-    button.addEventListener('click', function() {
-        let count = parseInt(counters[index].textContent)
-        count++
-        counters[index].textContent = count  // Actualizo el contador correspondiente
-        actTolales()  // Actualizo subtotales, productos seleccionados y total
-    })
-})
-
-// Agrego event listener a cada botón de decrementar
-botonMenosUno.forEach((button, index) => {
-    button.addEventListener('click', function() {
-        let count = parseInt(counters[index].textContent)
-        if (count > 0) {
-            count--
-            counters[index].textContent = count  // Actualizo el contador correspondiente
-            actTolales()  // Actualizo subtotales, productos seleccionados y total
-        }
-    })
-})
-
-//event listener para boton continuar 
+//Event listener para boton continuar 
 
 botonContinuar.addEventListener('click', function() {
   guardarProductos()
@@ -152,7 +161,7 @@ botonContinuar.addEventListener('click', function() {
 })
 
 
-// funcion para mostrar las opciones seleccionadas y el total en el carrito
+// Funcion para mostrar las opciones seleccionadas y el total en el carrito
   function mostrarSeleccion(){
     
         listaSeleccion = llamarDesdeLocalStorage()
@@ -175,6 +184,7 @@ botonContinuar.addEventListener('click', function() {
  
 } 
 
+// Funcion para continuar... pd: En construccion
 confirmarElem.addEventListener('click', function() {
     principalContainer.innerHTML = `<h3 class="d-flex justify-content-center" > ¡Gracias!<h3></h3>`
   })
