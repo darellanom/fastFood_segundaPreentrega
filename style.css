@@ -24,6 +24,7 @@ footer{
 .btn{
   background-color: #dc4a07;
   color: white;
+  width: max-content;
 }
 .producto{
   padding: 2%;
